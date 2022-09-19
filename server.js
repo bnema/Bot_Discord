@@ -46,16 +46,17 @@ client.once('ready', () => {
 		// On console log le message
 		console.log('Message envoyé !');
 	}
+	// Fonction ping pong
+	function pingPong() {
+		// If a user in the channel general write "ping" the bot will answer "pong"
+		client.on('message', message => {
+			if (message.content === 'ping') {
+				message.channel.send('pong');
+			}});
+	}
+
 });
 
-// Add event listener for messages
-client.on('message', message => {
-	// If the message is "ping"
-	if (message.content === 'ping') {
-		// Send "pong" to the same channel
-		message.channel.send('pong');
-	}
-});
 
 // On connecte le bot
 client.login(token);
