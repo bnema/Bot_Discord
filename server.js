@@ -1,31 +1,35 @@
 // C'est le fichier server.js qui va nous permettre de faire fonctionner le bot
 // On importe les modules nécessaires
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, Webhook } = require('discord.js');
 // On ajoute le ficher config.json qui contient les informations de connexion du bit (ID & Token)
-const { token } = require('./config.json');
-
+const { clientId, guildId, token} = require('./config.json');
 // On crée un objet client qui va nous permettre de faire fonctionner le bot
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-// Quand le serveur est prêt, on affiche un message dans la console
+// On crée un événement qui va nous permettre de savoir quand le bot est prêt
 client.once('ready', () => {
 	console.log('Ready!');
 });
 
-
-// On crée un évènement qui va nous permettre de faire fonctionner les commandes
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-  // On crée un objet qui contient les commandes
-	const { commandName } = interaction;
-  // On crée un objet qui contient les réponses
-	if (commandName === 'ping') {
-		await interaction.reply('Pong!');
-	} else if (commandName === 'server') {
-		await interaction.reply('Server info.');
-	} else if (commandName === 'user') {
-		await interaction.reply('User info.');
-	}
+// On crée un événement qui va nous permettre de savoir quand le bot reçoit un message
+client.on('messageCreate', async message => {
+	// On vérifie que le message n'est pas envoyé par le bot
+	if (message.author.bot) return;
+	// On vérifie que le message est envoyé dans le bon salon
+	if (message.channelId !== '1020004657285845054') return;
+	// Transforme le channelID en nom
+	const channel = client.channels.cache.get('1020004657285845054');
+	console.log(channel.name);
+	// On vérifie que le message commence par le préfixe
+	if (!message.content.startsWith('!')) return;
+	// On récupère la commande et les arguments
+	const args = message.content.slice(1).trim().split(/ +/);
+	const command = args.shift().toLowerCase();
+	// On vérifie que la commande est bien la commande "ping"
+	if (command !== 'ping') return;
+	// On envoie un message dans le salon
+	message.channel.send('Pong.');
 });
-// On connecte le bot au serveur
+
+// On connecte le bot
 client.login(token);
