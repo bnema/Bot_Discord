@@ -5,11 +5,13 @@ const { Client, GatewayIntentBits, Webhook } = require('discord.js');
 const { clientId, guildId, token} = require('./config.json');
 // On crée un objet client qui va nous permettre de faire fonctionner le bot
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-// chanels.cache.map(channel => channel.name) permet de récupérer tous les salons du serveur
 
 // On crée un tableau qui contiendra tous les salons du serveur
 const channels = [];
+
+// On crée un tableau qui contiendra tous les utilisateurs du serveur
 const users = [];
+
 
 // On crée un événement qui va nous permettre de savoir quand le bot est prêt
 client.once('ready', () => {
@@ -25,25 +27,35 @@ client.once('ready', () => {
 		// on liste tous les utilisateurs du serveur
 		client.users.cache.forEach((user) => {
 			console.log(` -- ${user.username} - ${user.id}`);
+			// On ajoute l'utilisateur au tableau users
+			users.push(user);	
 		});
 		
 	});
-	// Si le channel general est présent on envoie un message
-	if (client.channels.cache.get('1020004657285845054')) {
-		client.channels.cache.get('1020004657285845054').send('Salut à tous !');
+	// Si le channel general existe on recupere son ID
+	if (client.channels.cache.find(channel => channel.name === 'general')) {
+		const generalChannel = client.channels.cache.find(channel => channel.name === 'general');
+		console.log("Le channel general existe en possède l'id", generalChannel.id);
+	} else {
+		console.log("Le channel general n'existe pas");
+	};
+	// Si le channel general est présent on envoie un message dedans
+	if (client.channels.cache.find(channel => channel.name === 'general')) {
+		// On envoie un message dans le channel général contenant les utilisateurs du serveur
+		client.channels.cache.get('1020004657285845054').send(`Liste des utilisateurs du serveur : ${users}`);
 		// On console log le message
 		console.log('Message envoyé !');
 	}
 });
 
-// On crée une fonction ping pong
-function pingPong(message) {
-	// Si le message est égal à ping
+// Add event listener for messages
+client.on('message', message => {
+	// If the message is "ping"
 	if (message.content === 'ping') {
-		// On envoie pong
+		// Send "pong" to the same channel
 		message.channel.send('pong');
 	}
-}
+});
 
 // On connecte le bot
 client.login(token);
