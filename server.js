@@ -5,30 +5,30 @@ const { Client, GatewayIntentBits, Webhook } = require('discord.js');
 const { clientId, guildId, token} = require('./config.json');
 // On crée un objet client qui va nous permettre de faire fonctionner le bot
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+// chanels.cache.map(channel => channel.name) permet de récupérer tous les salons du serveur
+
+// On crée un tableau qui contiendra tous les salons du serveur
+const channels = [];
 
 // On crée un événement qui va nous permettre de savoir quand le bot est prêt
 client.once('ready', () => {
 	console.log('Ready!');
-});
+	// We list all the servers the bot is connected to
+	console.log("Servers:");
+	client.guilds.cache.forEach((guild) => {
+		console.log(" - " + guild.name);
+		// We list all the channels
+		guild.channels.cache.forEach((channel) => {
+			console.log(` -- ${channel.name} (${channel.type}) - ${channel.id}`);
+		});
+	});
+	// Si le channel general est présent on affiche son id
+	if (client.channels.cache.get('1020004657285845054')) {
+		console.log('Le salon general est présent');
+		// Et on envoi un message dedans
+		client.channels.cache.get('1020004657285845054').send('Hello world!');
+	}
 
-// On crée un événement qui va nous permettre de savoir quand le bot reçoit un message
-client.on('messageCreate', async message => {
-	// On vérifie que le message n'est pas envoyé par le bot
-	if (message.author.bot) return;
-	// On vérifie que le message est envoyé dans le bon salon
-	if (message.channelId !== '1020004657285845054') return;
-	// Transforme le channelID en nom
-	const channel = client.channels.cache.get('1020004657285845054');
-	console.log(channel.name);
-	// On vérifie que le message commence par le préfixe
-	if (!message.content.startsWith('!')) return;
-	// On récupère la commande et les arguments
-	const args = message.content.slice(1).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
-	// On vérifie que la commande est bien la commande "ping"
-	if (command !== 'ping') return;
-	// On envoie un message dans le salon
-	message.channel.send('Pong.');
 });
 
 // On connecte le bot
