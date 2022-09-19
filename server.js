@@ -9,6 +9,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // On crée un tableau qui contiendra tous les salons du serveur
 const channels = [];
+const users = [];
 
 // On crée un événement qui va nous permettre de savoir quand le bot est prêt
 client.once('ready', () => {
@@ -21,15 +22,37 @@ client.once('ready', () => {
 		guild.channels.cache.forEach((channel) => {
 			console.log(` -- ${channel.name} (${channel.type}) - ${channel.id}`);
 		});
+		// on liste tous les utilisateurs du serveur
+		client.users.cache.forEach((user) => {
+			console.log(` -- ${user.username} - ${user.id}`);
+		});
+		
 	});
-	// Si le channel general est présent on affiche son id
+	// Si le channel general est présent on envoie un message
 	if (client.channels.cache.get('1020004657285845054')) {
-		console.log('Le salon general est présent');
-		// Et on envoi un message dedans
-		client.channels.cache.get('1020004657285845054').send('Hello world!');
+		client.channels.cache.get('1020004657285845054').send('Salut à tous !');
+		// On console log le message
+		console.log('Message envoyé !');
 	}
-
 });
+
+// On crée une fonction ping pong
+function pingPong(message) {
+	// Si le message est égal à ping
+	if (message.content === 'ping') {
+		// On envoie pong
+		message.channel.send('pong');
+	}
+}
 
 // On connecte le bot
 client.login(token);
+
+// La fonction ping pong ne fonctionne pas
+// A faire :
+// On veut récupérer tous les salons texte du serveur et les stocker dans un tableau
+// On veut utiliser ce tableau pour faire une liste numéroté des salons
+// On veut écrire dans un salon texte en fonction du numéro de la liste
+
+// Ou on veut écrire dans le salon où un utilisateur a écrit un message
+
