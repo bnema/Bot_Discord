@@ -6,13 +6,6 @@ const { clientId, guildId, token} = require('./config.json');
 // On crée un objet client qui va nous permettre de faire fonctionner le bot
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-// On crée un tableau qui contiendra tous les salons du serveur
-const channels = [];
-
-// On crée un tableau qui contiendra tous les utilisateurs du serveur
-const users = [];
-
-
 // On crée un événement qui va nous permettre de savoir quand le bot est prêt
 client.once('ready', () => {
 	console.log('Ready!');
@@ -24,37 +17,24 @@ client.once('ready', () => {
 		guild.channels.cache.forEach((channel) => {
 			console.log(` -- ${channel.name} (${channel.type}) - ${channel.id}`);
 		});
-		// on liste tous les utilisateurs du serveur
-		client.users.cache.forEach((user) => {
-			console.log(` -- ${user.username} - ${user.id}`);
-			// On ajoute l'utilisateur au tableau users
-			users.push(user);	
-		});
-		
 	});
-	// Si le channel general existe on recupere son ID
-	if (client.channels.cache.find(channel => channel.name === 'general')) {
-		const generalChannel = client.channels.cache.find(channel => channel.name === 'general');
-		console.log("Le channel general existe en possède l'id", generalChannel.id);
-	} else {
-		console.log("Le channel general n'existe pas");
-	};
 	// Si le channel general est présent on envoie un message dedans
 	if (client.channels.cache.find(channel => channel.name === 'general')) {
-		// On envoie un message dans le channel général contenant les utilisateurs du serveur
-		client.channels.cache.get('1020004657285845054').send(`Liste des utilisateurs du serveur : ${users}`);
-		// On console log le message
-		console.log('Message envoyé !');
-	}
+		const generalChannel = client.channels.cache.find(channel => channel.name === 'general');
+		generalChannel.send('Hello world!');
+			// List all users of the channel
+			generalChannel.members.forEach((member) => {
+				console.log(` -- ${member.user.tag}`);
+			}
+		);
+	};
 	// Fonction ping pong
-	function pingPong() {
-		// If a user in the channel general write "ping" the bot will answer "pong"
+	// If a user in the channel general write "ping" the bot will answer "pong"
 		client.on('message', message => {
+			console.log(message.content);
 			if (message.content === 'ping') {
 				message.channel.send('pong');
 			}});
-	}
-
 });
 
 
