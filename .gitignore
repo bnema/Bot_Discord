@@ -1,4 +1,5 @@
 node_modules/
 private/
+data/
 process.env
 config.json
