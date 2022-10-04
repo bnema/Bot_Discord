@@ -2,7 +2,7 @@
 // On importe les modules nécessaires
 const { Client, GatewayIntentBits, Webhook } = require('discord.js');
 // On ajoute le ficher config.json qui contient les informations de connexion du bit (ID & Token)
-const { clientId, guildId, token} = require('./config.json');
+const { clientId, guildId, token} = require('./private/config.json');
 // On crée un objet client qui va nous permettre de faire fonctionner le bot
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
