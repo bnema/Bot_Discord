@@ -12,14 +12,7 @@ const { Routes } = require('discord-api-types/v9');
 // On indique nos fichiers json channels et users
 // const users = JSON.parse('data/users.json');
 
-let allChannels = [
-    {
-        "id": "0",
-        "channelName": "test",
-        "channelType": "text",
-        "channelId": "0"
-    }
-];
+let allChannels = [];
 
 // Express part
 const express = require('express');
@@ -32,24 +25,29 @@ client.on('ready', () => {
     client.guilds.cache.forEach((guild) => {
         guild.channels.cache.forEach((channel) => {
             allChannels.push({
-                // The "id" is the index of the array + 1
                 "id": allChannels.length,
                 "channelName": channel.name,
                 "channelType": channel.type,
                 "channelId": channel.id
             });
         // We write the array in a json file
-        fs.writeFile('data/channels.json', JSON.stringify(allChannels), (err) => {
+        fs.writeFile('data/channels.json', JSON.stringify(allChannels, null, '\t'), (err) => {
             if (err) throw err;
         
         });
     });
     });
-                    // Console log guilds and channels saved
-                    console.log('Guilds and channels saved');
+      // Console log guilds and channels saved
+     console.log('Guilds and channels saved');
 });
 
-
+client.once('ready', () => {
+    // We get the channel ID of the server named "test"
+    const channelId = client.channels.cache.find(channel => channel.name === 'insultes').id;  
+    console.log(channelId);
+    // And we send a message in this channel
+    client.channels.cache.get(channelId).send('Surtout Aurélien, la pire des merdes');
+});
 
 
 // We want to store all the text channels in an array
